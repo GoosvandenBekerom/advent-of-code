@@ -55,7 +55,7 @@ func findSumVector3(input []int64, sum int64) vector3 {
 				continue
 			}
 			for k := 0; k < size; k++ {
-				if j == k {
+				if i == k || j == k {
 					continue
 				}
 				if input[i]+input[j]+input[k] == sum {
