@@ -57,7 +57,9 @@ type dimension struct {
 }
 
 func (d *dimension) set(x, y, z, w int, active bool) {
-	d.cubes[position{x, y, z, w}] = active
+	if active {
+		d.cubes[position{x, y, z, w}] = active
+	}
 }
 
 func (d *dimension) isActive(x, y, z, w int) bool {
