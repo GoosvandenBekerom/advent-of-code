@@ -68,7 +68,6 @@ func eval1(expression string) int {
 		check(err)
 		evaluated := solve(a, b, []rune(expression[matches[4]:matches[5]])[0])
 		expression = expression[:matches[0]] + strconv.Itoa(evaluated) + expression[matches[1]:]
-		println("next " + expression)
 	}
 
 	solution, err := strconv.Atoi(expression)
