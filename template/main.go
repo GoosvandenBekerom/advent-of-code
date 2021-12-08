@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"strconv"
 
 	"fmt"
 	"log"
@@ -41,4 +42,10 @@ func check(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func toInt(s string) int {
+	v, err := strconv.Atoi(s)
+	check(err)
+	return v
 }
