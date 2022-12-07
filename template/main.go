@@ -13,25 +13,29 @@ import (
 var input string
 
 func main() {
-	part1()
-	part2()
+	fmt.Println(part1(input))
+	fmt.Println(part2(input))
 }
 
 // ----------------------------------------
 // solution
 // ----------------------------------------
 
-func part1() {
+func part1(input string) string {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 1:")
 	for _, line := range strings.Split(input, "\n") {
 		println(line)
 	}
+
+	return ""
 }
 
-func part2() {
+func part2(input string) string {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
+
+	return ""
 }
 
 // ----------------------------------------
