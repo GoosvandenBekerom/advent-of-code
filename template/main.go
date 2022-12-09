@@ -44,7 +44,7 @@ func part2(input string) string {
 
 func check(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 }
 
