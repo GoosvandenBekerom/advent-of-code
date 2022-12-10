@@ -2,13 +2,12 @@ package main
 
 import (
 	_ "embed"
-	"github.com/GoosvandenBekerom/advent-of-code/datastructures"
-	"math"
-	"strconv"
-
 	"fmt"
-	"log"
+	"math"
 	"strings"
+
+	"github.com/GoosvandenBekerom/advent-of-code/data"
+	"github.com/GoosvandenBekerom/advent-of-code/utils"
 )
 
 //go:embed input
@@ -19,35 +18,31 @@ func main() {
 	fmt.Println(part2(input))
 }
 
-// ----------------------------------------
-// solution
-// ----------------------------------------
-
 type instruction struct {
-	direction datastructures.Vector
+	direction data.Vector
 	steps     int
 }
 
 func parseInstruction(line string) instruction {
 	dir, steps, _ := strings.Cut(line, " ")
-	var direction datastructures.Vector
+	var direction data.Vector
 	switch dir {
 	case "U":
-		direction = datastructures.Vector{Y: -1}
+		direction = data.Vector{Y: -1}
 		break
 	case "R":
-		direction = datastructures.Vector{X: 1}
+		direction = data.Vector{X: 1}
 		break
 	case "D":
-		direction = datastructures.Vector{Y: 1}
+		direction = data.Vector{Y: 1}
 		break
 	case "L":
-		direction = datastructures.Vector{X: -1}
+		direction = data.Vector{X: -1}
 		break
 	}
 	return instruction{
 		direction: direction,
-		steps:     toInt(steps),
+		steps:     utils.ToInt(steps),
 	}
 }
 
@@ -55,10 +50,10 @@ func part1(input string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 1:")
 
-	var H datastructures.Vector
-	var T datastructures.Vector
+	var H data.Vector
+	var T data.Vector
 
-	visited := make(map[datastructures.Vector]struct{})
+	visited := make(map[data.Vector]struct{})
 	visited[T] = struct{}{}
 
 	for _, line := range strings.Split(input, "\n") {
@@ -67,7 +62,7 @@ func part1(input string) int {
 			H = H.Add(move.direction)
 
 			if math.Abs(float64(T.X-H.X)) > 1 || math.Abs(float64(T.Y-H.Y)) > 1 {
-				T = datastructures.Vector{
+				T = data.Vector{
 					X: H.X - move.direction.X,
 					Y: H.Y - move.direction.Y,
 				}
@@ -84,10 +79,10 @@ func part2(input string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
 
-	var H datastructures.Vector
-	var knots [9]datastructures.Vector
+	var H data.Vector
+	var knots [9]data.Vector
 
-	visited := make(map[datastructures.Vector]struct{})
+	visited := make(map[data.Vector]struct{})
 	visited[knots[len(knots)-1]] = struct{}{}
 
 	for _, line := range strings.Split(input, "\n") {
@@ -127,7 +122,7 @@ func part2(input string) int {
 	return len(visited)
 }
 
-func printGrid(visited map[datastructures.Vector]struct{}) {
+func printGrid(visited map[data.Vector]struct{}) {
 	var minx, maxx, miny, maxy int
 	for position := range visited {
 		if position.X < minx {
@@ -146,7 +141,7 @@ func printGrid(visited map[datastructures.Vector]struct{}) {
 
 	for y := miny; y <= maxy; y++ {
 		for x := minx; x <= maxx; x++ {
-			if _, ok := visited[datastructures.Vector{X: x, Y: y}]; ok {
+			if _, ok := visited[data.Vector{X: x, Y: y}]; ok {
 				print("# ")
 			} else {
 				print(". ")
@@ -154,20 +149,4 @@ func printGrid(visited map[datastructures.Vector]struct{}) {
 		}
 		println()
 	}
-}
-
-// ----------------------------------------
-// utils
-// ----------------------------------------
-
-func check(err error) {
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func toInt(s string) int {
-	v, err := strconv.Atoi(s)
-	check(err)
-	return v
 }

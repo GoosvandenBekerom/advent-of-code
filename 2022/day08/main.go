@@ -2,10 +2,8 @@ package main
 
 import (
 	_ "embed"
-	"strconv"
-
 	"fmt"
-	"log"
+	"github.com/GoosvandenBekerom/advent-of-code/utils"
 	"strings"
 )
 
@@ -21,17 +19,13 @@ func main() {
 	for y, line := range strings.Split(input, "\n") {
 		grid = append(grid, make([]int, len(line)))
 		for x, value := range []byte(line) {
-			grid[y][x] = toInt(string(value))
+			grid[y][x] = utils.ToInt(string(value))
 		}
 	}
 
 	fmt.Println(part1(grid))
 	fmt.Println(part2(grid))
 }
-
-// ----------------------------------------
-// solution
-// ----------------------------------------
 
 func part1(trees [][]int) int {
 	fmt.Println("\n___________________________________________")
@@ -168,20 +162,4 @@ func calculateScenicScore(v vector, trees [][]int) int {
 	}
 
 	return top * bottom * right * left
-}
-
-// ----------------------------------------
-// utils
-// ----------------------------------------
-
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func toInt(s string) int {
-	v, err := strconv.Atoi(s)
-	check(err)
-	return v
 }

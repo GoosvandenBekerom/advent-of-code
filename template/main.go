@@ -2,10 +2,7 @@ package main
 
 import (
 	_ "embed"
-	"strconv"
-
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -13,43 +10,24 @@ import (
 var input string
 
 func main() {
-	fmt.Println(part1(input))
-	fmt.Println(part2(input))
+	lines := strings.Split(input, "\n")
+	fmt.Println(part1(lines))
+	fmt.Println(part2(lines))
 }
 
-// ----------------------------------------
-// solution
-// ----------------------------------------
-
-func part1(input string) string {
+func part1(lines []string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 1:")
-	for _, line := range strings.Split(input, "\n") {
+	for _, line := range lines {
 		println(line)
 	}
 
-	return ""
+	return -1
 }
 
-func part2(input string) string {
+func part2(lines []string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
 
-	return ""
-}
-
-// ----------------------------------------
-// utils
-// ----------------------------------------
-
-func check(err error) {
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func toInt(s string) int {
-	v, err := strconv.Atoi(s)
-	check(err)
-	return v
+	return -1
 }

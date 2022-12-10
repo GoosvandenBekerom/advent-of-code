@@ -2,12 +2,10 @@ package main
 
 import (
 	_ "embed"
-	"github.com/GoosvandenBekerom/advent-of-code/datastructures"
-	"sort"
-	"strconv"
-
 	"fmt"
-	"log"
+	"github.com/GoosvandenBekerom/advent-of-code/data"
+	"github.com/GoosvandenBekerom/advent-of-code/utils"
+	"sort"
 	"strings"
 )
 
@@ -63,7 +61,7 @@ func part2(input string) int {
 }
 
 func calculateDirectorySizes(input string) map[string]int {
-	stack := make(datastructures.Stack[string], 0)
+	stack := make(data.Stack[string], 0)
 	var listing bool
 	sizes := make(map[string]int)
 
@@ -75,7 +73,7 @@ func calculateDirectorySizes(input string) map[string]int {
 				arg := line[5:]
 				switch arg {
 				case "/":
-					stack = datastructures.Stack[string]{"/"}
+					stack = data.Stack[string]{"/"}
 					continue
 				case "..":
 					stack.Pop()
@@ -97,7 +95,7 @@ func calculateDirectorySizes(input string) map[string]int {
 
 			rawSize, _, _ := strings.Cut(line, " ")
 
-			size := toInt(rawSize)
+			size := utils.ToInt(rawSize)
 			var path string
 			for _, dir := range stack {
 				path += dir
@@ -107,20 +105,4 @@ func calculateDirectorySizes(input string) map[string]int {
 	}
 
 	return sizes
-}
-
-// ----------------------------------------
-// utils
-// ----------------------------------------
-
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func toInt(s string) int {
-	v, err := strconv.Atoi(s)
-	check(err)
-	return v
 }

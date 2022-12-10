@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/GoosvandenBekerom/advent-of-code/datastructures"
+	"github.com/GoosvandenBekerom/advent-of-code/data"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func Test_part1(t *testing.T) {
-	stacks, moves := map[int]*datastructures.Stack[string]{
+	stacks, moves := map[int]*data.Stack[string]{
 		1: {"Z", "N"},
 		2: {"M", "C", "D"},
 		3: {"P"},
@@ -22,7 +22,7 @@ func Test_part1(t *testing.T) {
 }
 
 func Test_part2(t *testing.T) {
-	stacks, moves := map[int]*datastructures.Stack[string]{
+	stacks, moves := map[int]*data.Stack[string]{
 		1: {"Z", "N"},
 		2: {"M", "C", "D"},
 		3: {"P"},

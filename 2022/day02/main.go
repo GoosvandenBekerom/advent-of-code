@@ -2,50 +2,33 @@ package main
 
 import (
 	_ "embed"
-	"strconv"
-
 	"fmt"
-	"log"
 	"strings"
 )
 
 //go:embed input
 var input string
 
-/*
-A = 1 ROCK
-B = 2 PAPER
-C = 3 SCISSORS
-LOSS = 0
-DRAW = 3
-WIN = 6
-*/
-
 func main() {
-	part1()
-	part2()
+	fmt.Println(part1(input))
+	fmt.Println(part2(input))
 }
 
-// ----------------------------------------
-// solution
-// ----------------------------------------
-
-func part1() {
+func part1(input string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 1:")
 
 	var score int
-
 	for _, line := range strings.Split(input, "\n") {
 		opponent := line[0]
 		you := line[2]
 		score += rockPaperScissors(opponent, you) + scores[you]
 	}
 
-	fmt.Printf("total score: %d\n", score)
+	return score
 }
 
-func part2() {
+func part2(input string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
 
@@ -65,12 +48,8 @@ func part2() {
 		score += scores[you] + points[outcome]
 	}
 
-	fmt.Printf("total score: %d\n", score)
+	return score
 }
-
-// ----------------------------------------
-// utils
-// ----------------------------------------
 
 var scores = map[uint8]int{
 	'A': 1, // ROCK
@@ -133,16 +112,4 @@ func calculateOwnMove(opponent, outcome uint8) uint8 {
 		}
 	}
 	panic("unknown input")
-}
-
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func toInt(s string) int {
-	v, err := strconv.Atoi(s)
-	check(err)
-	return v
 }

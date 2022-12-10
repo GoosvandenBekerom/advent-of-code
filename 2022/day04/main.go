@@ -2,10 +2,10 @@ package main
 
 import (
 	_ "embed"
+	"github.com/GoosvandenBekerom/advent-of-code/utils"
 	"strconv"
 
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -13,20 +13,15 @@ import (
 var input string
 
 func main() {
-	part1()
-	part2()
+	fmt.Println(part1(input))
+	fmt.Println(part2(input))
 }
 
-// ----------------------------------------
-// solution
-// ----------------------------------------
-
-func part1() {
+func part1(input string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 1:")
 
 	var sumContaining int
-
 	for _, line := range strings.Split(input, "\n") {
 		left, right, _ := strings.Cut(line, ",")
 
@@ -39,15 +34,14 @@ func part1() {
 		}
 	}
 
-	fmt.Printf("num of ranges fully contained: %d\n", sumContaining)
+	return sumContaining
 }
 
-func part2() {
+func part2(input string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
 
 	var sumOverlapping int
-
 	for _, line := range strings.Split(input, "\n") {
 		left, right, _ := strings.Cut(line, ",")
 
@@ -67,7 +61,7 @@ func part2() {
 		}
 	}
 
-	fmt.Printf("num of ranges overlapping: %d\n", sumOverlapping)
+	return sumOverlapping
 }
 
 type Range struct {
@@ -79,28 +73,12 @@ func parseRange(s string) Range {
 	var r Range
 
 	lower, err := strconv.Atoi(left)
-	check(err)
+	utils.Check(err)
 	r.lower = lower
 
 	upper, err := strconv.Atoi(right)
-	check(err)
+	utils.Check(err)
 	r.upper = upper
 
 	return r
-}
-
-// ----------------------------------------
-// utils
-// ----------------------------------------
-
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func toInt(s string) int {
-	v, err := strconv.Atoi(s)
-	check(err)
-	return v
 }

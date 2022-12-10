@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -14,19 +13,15 @@ import (
 var input string
 
 func main() {
-	part1()
-	part2()
+	fmt.Println(part1(input))
+	fmt.Println(part2(input))
 }
 
-// ----------------------------------------
-// solution
-// ----------------------------------------
-
-func part1() {
+func part1(input string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 1:")
 
-	var currentElf, largestElf int64
+	var currentElf, largestElf int
 	for _, line := range strings.Split(input, "\n") {
 		if line == "" {
 			if currentElf > largestElf {
@@ -41,24 +36,22 @@ func part1() {
 			panic(err)
 		}
 
-		currentElf += int64(calories)
+		currentElf += calories
 	}
 
 	if currentElf > largestElf {
 		largestElf = currentElf
 	}
 
-	fmt.Printf("most calories caried by single elf: %d\n", largestElf)
+	return largestElf
 }
 
-func part2() {
+func part2(input string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
 
 	var currentElf int
 	var elfs []int
-
-	//pq := make(datastructures.PriorityQueue, 3)
 
 	for _, line := range strings.Split(input, "\n") {
 		if line == "" {
@@ -82,15 +75,5 @@ func part2() {
 		sum += elfs[i]
 	}
 
-	fmt.Printf("amount of calories caried by top 3 elfs: %d\n", sum)
-}
-
-// ----------------------------------------
-// utils
-// ----------------------------------------
-
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
+	return sum
 }

@@ -1,4 +1,4 @@
-package datastructures
+package data
 
 import "fmt"
 
