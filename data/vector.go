@@ -13,5 +13,5 @@ func (v Vector) Add(other Vector) Vector {
 }
 
 func (v Vector) String() string {
-	return fmt.Sprintf("%d-%d", v.X, v.Y)
+	return fmt.Sprintf("%d,%d", v.X, v.Y)
 }

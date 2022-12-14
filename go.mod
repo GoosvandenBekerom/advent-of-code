@@ -3,6 +3,7 @@ module github.com/GoosvandenBekerom/advent-of-code
 go 1.19
 
 require (
+	github.com/beefsack/go-astar v0.0.0-20200827232313-4ecf9e304482
 	github.com/deanveloper/modmath v0.0.0-20180521023214-c82838591061
 	github.com/gobuffalo/packr/v2 v2.8.3
 	github.com/stretchr/testify v1.7.0
