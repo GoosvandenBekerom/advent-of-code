@@ -102,7 +102,7 @@ type numberRange struct {
 }
 
 func (r numberRange) contains(target int) bool {
-	return utils.IsWithinBounds(target, r.sourceStart, r.sourceStart+r.length)
+	return target >= r.sourceStart && target < r.sourceStart+r.length
 }
 
 func toNumberRange(line string) numberRange {
