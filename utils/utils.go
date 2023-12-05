@@ -2,6 +2,8 @@ package utils
 
 import (
 	"strconv"
+
+	"golang.org/x/exp/constraints"
 )
 
 func Check(err error) {
@@ -29,4 +31,8 @@ func Map[I, O any](in []I, f func(item I) O) (out []O) {
 		out = append(out, f(item))
 	}
 	return out
+}
+
+func IsWithinBounds[T constraints.Integer | constraints.Float](target, lower, upper T) bool {
+	return target >= lower && target <= upper
 }

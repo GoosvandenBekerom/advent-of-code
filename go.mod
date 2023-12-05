@@ -7,6 +7,7 @@ require (
 	github.com/deanveloper/modmath v0.0.0-20180521023214-c82838591061
 	github.com/gobuffalo/packr/v2 v2.8.3
 	github.com/stretchr/testify v1.7.0
+	golang.org/x/exp v0.0.0-20231127185646-65229373498e
 )
 
 require (
