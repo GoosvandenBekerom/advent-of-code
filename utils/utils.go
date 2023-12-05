@@ -23,3 +23,10 @@ func Reverse(s string) string {
 	}
 	return string(runes)
 }
+
+func Map[I, O any](in []I, f func(item I) O) (out []O) {
+	for _, item := range in {
+		out = append(out, f(item))
+	}
+	return out
+}
