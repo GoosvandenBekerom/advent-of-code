@@ -20,6 +20,25 @@ func main() {
 func part1(lines []string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 1:")
+	return findLowestSeedLocation(lines, func(seeds []int) []int {
+		return seeds
+	})
+}
+
+func part2(lines []string) int {
+	fmt.Println("\n___________________________________________")
+	fmt.Println("part 2:")
+	return findLowestSeedLocation(lines, func(seedRanges []int) (seeds []int) {
+		for i := 0; i < len(seedRanges); i += 2 {
+			for num := seedRanges[i]; num < seedRanges[i]+seedRanges[i+1]; num++ {
+				seeds = append(seeds, num)
+			}
+		}
+		return seeds
+	})
+}
+
+func findLowestSeedLocation(lines []string, seedsMapper func([]int) []int) int {
 	var seeds []int
 	ranges := map[string][]numberRange{
 		"seedToSoil":            {},
@@ -38,9 +57,9 @@ func part1(lines []string) int {
 		case "":
 			continue
 		case "seeds":
-			seeds = utils.Map(strings.Split(strings.TrimSpace(right), " "), func(item string) int {
+			seeds = seedsMapper(utils.Map(strings.Split(strings.TrimSpace(right), " "), func(item string) int {
 				return utils.ToInt(item)
-			})
+			}))
 		case "seed-to-soil map":
 			currentRange = "seedToSoil"
 		case "soil-to-fertilizer map":
@@ -70,6 +89,7 @@ func part1(lines []string) int {
 		humidity := mapToRange(temperature, ranges["temperatureToHumidity"])
 		location := mapToRange(humidity, ranges["humidityToLocation"])
 		if location < lowest {
+			println("new lowest, seed", seed, "location", location)
 			lowest = location
 		}
 	}
@@ -79,6 +99,10 @@ func part1(lines []string) int {
 
 type numberRange struct {
 	destStart, sourceStart, length int
+}
+
+func (r numberRange) contains(target int) bool {
+	return utils.IsWithinBounds(target, r.sourceStart, r.sourceStart+r.length)
 }
 
 func toNumberRange(line string) numberRange {
@@ -92,16 +116,9 @@ func toNumberRange(line string) numberRange {
 
 func mapToRange(target int, ranges []numberRange) int {
 	for _, r := range ranges {
-		if utils.IsWithinBounds(target, r.sourceStart, r.sourceStart+r.length) {
+		if r.contains(target) {
 			return r.destStart + (target - r.sourceStart)
 		}
 	}
 	return target
-}
-
-func part2(lines []string) int {
-	fmt.Println("\n___________________________________________")
-	fmt.Println("part 2:")
-
-	return -1
 }

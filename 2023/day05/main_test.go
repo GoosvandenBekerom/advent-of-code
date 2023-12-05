@@ -46,5 +46,5 @@ func Test_part1(t *testing.T) {
 }
 
 func Test_part2(t *testing.T) {
-	assert.Equal(t, 0, part2(testInput))
+	assert.Equal(t, 46, part2(testInput))
 }
