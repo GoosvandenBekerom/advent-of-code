@@ -30,3 +30,18 @@ func Map[I, O any](in []I, f func(item I) O) (out []O) {
 	}
 	return out
 }
+
+func All[T any](in []T, f func(T) bool) bool {
+	for _, v := range in {
+		if !f(v) {
+			return false
+		}
+	}
+	return true
+}
+
+func ReverseSlice[S any](s []S) {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+}
