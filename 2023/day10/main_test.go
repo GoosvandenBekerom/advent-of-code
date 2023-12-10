@@ -66,6 +66,6 @@ var testInput5 = []string{
 
 func Test_part2(t *testing.T) {
 	assert.Equal(t, 4, part2(testInput3))
-	//assert.Equal(t, 8, part2(testInput4))
-	//assert.Equal(t, 10, part2(testInput5))
+	assert.Equal(t, 8, part2(testInput4))
+	assert.Equal(t, 10, part2(testInput5))
 }
