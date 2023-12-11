@@ -3,8 +3,9 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"github.com/GoosvandenBekerom/advent-of-code/data"
 	"strings"
+
+	"github.com/GoosvandenBekerom/advent-of-code/data"
 )
 
 //go:embed input
@@ -14,21 +15,6 @@ func main() {
 	lines := strings.Split(input, "\n")
 	fmt.Println(part1(lines))
 	fmt.Println(part2(lines))
-}
-
-type set map[int]struct{}
-
-func (s set) add(i int) {
-	s[i] = struct{}{}
-}
-
-func (s set) has(i int) bool {
-	_, ok := s[i]
-	return ok
-}
-
-func (s set) remove(i int) {
-	delete(s, i)
 }
 
 func part1(lines []string) int {
@@ -44,64 +30,62 @@ func part2(lines []string) int {
 }
 
 func calculate(lines []string, expansionSize int) int {
-	emptyCols := make(set)
+	emptyCols := data.NewSet[int]()
 	for i := 0; i < len(lines[0]); i++ {
-		emptyCols.add(i)
+		emptyCols.Add(i)
 	}
-	emptyRows := make(set)
+	emptyRows := data.NewSet[int]()
 	for rowI, line := range lines {
 		rowEmpty := true
 		for colI, char := range line {
 			if char == '#' {
 				rowEmpty = false
-				emptyCols.remove(colI)
+				emptyCols.Remove(colI)
 			}
 		}
 		if rowEmpty {
-			emptyRows.add(rowI)
+			emptyRows.Add(rowI)
 		}
 	}
 
-	galaxies := make(map[data.Vector]int)
+	galaxies := data.NewSet[data.Vector]()
 	y := 0
-	galaxyIndex := 1
 	for row, line := range lines {
 		x := 0
 		for col, char := range line {
 			if char == '#' {
-				galaxies[data.Vector{X: x, Y: y}] = galaxyIndex
-				galaxyIndex++
+				galaxies.Add(data.Vector{X: x, Y: y})
 			}
-			if emptyCols.has(col) {
+			if emptyCols.Has(col) {
 				x += expansionSize
 			} else {
 				x++
 			}
 		}
-		if emptyRows.has(row) {
+		if emptyRows.Has(row) {
 			y += expansionSize
 		} else {
 			y++
 		}
 	}
 
-	indexedGalaxies := make([]data.Vector, 0, len(galaxies))
-	for galaxy := range galaxies {
+	indexedGalaxies := make([]data.Vector, 0, galaxies.Len())
+	for _, galaxy := range galaxies.Values() {
 		indexedGalaxies = append(indexedGalaxies, galaxy)
 	}
 
-	uniquePairs := make(map[data.Vector]struct{})
+	uniquePairs := data.NewSet[data.Vector]()
 	for i := 0; i < len(indexedGalaxies); i++ {
 		for j := len(indexedGalaxies) - 1; j >= 0; j-- {
 			if i >= j {
 				continue
 			}
-			uniquePairs[data.Vector{X: min(i, j), Y: max(i, j)}] = struct{}{}
+			uniquePairs.Add(data.Vector{X: min(i, j), Y: max(i, j)})
 		}
 	}
 
 	var sum int
-	for pair := range uniquePairs {
+	for _, pair := range uniquePairs.Values() {
 		galaxy1, galaxy2 := indexedGalaxies[pair.X], indexedGalaxies[pair.Y]
 		sum += galaxy1.ManhattanDistance(galaxy2)
 	}
