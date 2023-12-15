@@ -35,26 +35,27 @@ func (g Grid) String() string {
 }
 
 func (g Grid) tilt(dy, dx int) {
-	for x := 0; x < len(g[0]); x++ {
-		inEmptySpace := false
-		lastEmpty := 0
+	done := true
+	for {
+		done = true
 		for y := 0; y < len(g); y++ {
-			switch g[y][x] {
-			case '#':
-				inEmptySpace = false
-			case 'O':
-				if !inEmptySpace {
-					break
-				}
-				g[lastEmpty][x] = 'O'
-				g[y][x] = '.'
-				lastEmpty++
-			case '.':
-				if !inEmptySpace {
-					lastEmpty = y
-					inEmptySpace = true
+			for x := 0; x < len(g[y]); x++ {
+				if g[y][x] == 'O' {
+					if y+dy < 0 || y+dy >= len(g) || x+dx < 0 || x+dx >= len(g[y]) {
+						continue
+					}
+
+					if g[y+dy][x+dx] == '.' {
+						g[y+dy][x+dx] = 'O'
+						g[y][x] = '.'
+						done = false
+					}
 				}
 			}
+		}
+
+		if done {
+			break
 		}
 	}
 }
@@ -80,6 +81,26 @@ func part1(lines []string) int {
 func part2(lines []string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
+	grid := ByteGrid(lines)
+	seen := map[string]int{grid.String(): 0}
+	indexes := map[int]string{0: grid.String()}
 
-	return -1
+	var i int
+	for {
+		i++
+		grid.tilt(-1, 0) // North
+		grid.tilt(0, -1) // West
+		grid.tilt(1, 0)  // South
+		grid.tilt(0, 1)  // East
+
+		key := grid.String()
+		firstTimeSeen, seenBefore := seen[key]
+		if seenBefore {
+			var iterationsSinceSeen = i - firstTimeSeen
+			var doneIndex = firstTimeSeen + ((1000000000 - firstTimeSeen) % iterationsSinceSeen)
+			return ByteGrid(strings.Split(strings.TrimSpace(indexes[doneIndex]), "\n")).weight()
+		}
+		seen[key] = i
+		indexes[i] = key
+	}
 }
