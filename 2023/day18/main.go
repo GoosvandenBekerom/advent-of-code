@@ -80,44 +80,40 @@ func calculateArea(edge data.Set[data.Vector]) int {
 			maxy = p.Y
 		}
 	}
-	var sb strings.Builder
 	var sum int
 	for y := miny; y <= maxy; y++ {
-		inArea := false
-		lastOriginal := '.'
-		horizontalLine := false
-		if y == 2 {
-			print()
+		var edgePositionsInRow []data.Vector
+		for x := minx; x <= maxx; x++ {
+			pos := data.Vector{X: x, Y: y}
+			if edge.Has(pos) {
+				edgePositionsInRow = append(edgePositionsInRow, pos)
+			}
 		}
-		for x := minx; x <= maxx+5; x++ { // TODO: outer horizontal edges never get to inArea == false (remove +5 after fix)
-			char := '.'
-			if edge.Has(data.Vector{X: x, Y: y}) {
-				if lastOriginal == '.' {
-					inArea = !inArea
-				} else {
-					horizontalLine = true
+		if len(edgePositionsInRow)%2 != 0 {
+			// Filter out horizontal edges by taking first x position of edges as "start" and last as "end"
+			var prev int
+			var edgeStart *int
+			var newEdgePositionsInRow []data.Vector
+			for i := 0; i < len(edgePositionsInRow); i++ {
+				if edgeStart != nil && (edgePositionsInRow[i].X-prev > 1 || i == len(edgePositionsInRow)-1) {
+					newEdgePositionsInRow = append(newEdgePositionsInRow, data.Vector{X: *edgeStart, Y: y})
+					newEdgePositionsInRow = append(newEdgePositionsInRow, data.Vector{X: edgePositionsInRow[i].X, Y: y})
+					edgeStart = nil
+					continue
 				}
-				char = '#'
-				sum++
-				lastOriginal = '#'
-			} else {
-				if horizontalLine {
-					// x - 1 was still a horizontal line
-					//
-					inArea = false
-					horizontalLine = false
-				}
-				lastOriginal = '.'
-				if inArea {
-					char = '#'
-					sum++
+
+				prev = edgePositionsInRow[i].X
+				if edgeStart == nil {
+					edgeStart = &edgePositionsInRow[i].X
 				}
 			}
-			sb.WriteRune(char)
+			edgePositionsInRow = newEdgePositionsInRow
 		}
-		sb.WriteRune('\n')
+		for i := 0; i < len(edgePositionsInRow); i += 2 {
+			sum += edgePositionsInRow[i+1].X - edgePositionsInRow[i].X + 1
+		}
+		//println("sum after row", y, sum)
 	}
-	println(sb.String())
 	return sum
 }
 
@@ -126,7 +122,7 @@ func part1(lines []string) int {
 	fmt.Println("part 1:")
 	instructions := parse(lines)
 	path := walk(instructions)
-	return calculateArea(path)
+	return calculateArea(path) // must be higher than 49582
 }
 
 func part2(lines []string) int {
