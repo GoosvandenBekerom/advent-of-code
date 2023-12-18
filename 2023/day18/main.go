@@ -3,7 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"math"
+	"strconv"
 	"strings"
 
 	"github.com/GoosvandenBekerom/advent-of-code/data/directions"
@@ -23,30 +23,49 @@ func main() {
 }
 
 type instruction struct {
-	direction byte
+	direction directions.Direction
 	length    int
-	colour    string
 }
 
-func parse(lines []string) (instructions []instruction) {
+type lagoon struct {
+	vertices  []data.Vector
+	perimeter int
+}
+
+func toLagoon(instructions []instruction) lagoon {
+	cursor := data.Vector{}
+	result := lagoon{vertices: make([]data.Vector, 0)}
+	for _, instr := range instructions {
+		result.vertices = append(result.vertices, cursor)
+		result.perimeter += instr.length
+		cursor = data.Vector{
+			X: cursor.X + instr.direction.X*instr.length,
+			Y: cursor.Y + instr.direction.Y*instr.length,
+		}
+	}
+	return result
+}
+
+// Area -> https://rosettacode.org/wiki/Shoelace_formula_for_polygonal_area
+func (l lagoon) Area() int {
+	area := 0
+	for c := 0; c < len(l.vertices)-1; c++ {
+		area += l.vertices[c].X*l.vertices[c+1].Y - l.vertices[c+1].X*l.vertices[c].Y
+	}
+	area += l.vertices[len(l.vertices)-1].X*l.vertices[0].Y - l.vertices[0].X*l.vertices[len(l.vertices)-1].Y
+	area = utils.Abs(area)
+
+	return l.perimeter + (area-l.perimeter)/2 + 1
+}
+
+func part1(lines []string) int {
+	fmt.Println("\n___________________________________________")
+	fmt.Println("part 1:")
+	var instructions []instruction
 	for _, line := range lines {
 		parts := strings.Fields(line)
-		instructions = append(instructions, instruction{
-			direction: parts[0][0],
-			length:    utils.ToInt(parts[1]),
-			colour:    parts[2][1 : len(parts[2])-1],
-		})
-	}
-	return instructions
-}
-
-func walk(instructions []instruction) data.Set[data.Vector] {
-	path := data.NewSet[data.Vector]()
-	cursor := data.Vector{}
-	path.Add(cursor)
-	for _, instr := range instructions {
 		var d directions.Direction
-		switch instr.direction {
+		switch parts[0][0] {
 		case 'U':
 			d = directions.Up
 		case 'R':
@@ -56,78 +75,34 @@ func walk(instructions []instruction) data.Set[data.Vector] {
 		case 'L':
 			d = directions.Left
 		}
-		for i := 0; i < instr.length; i++ {
-			cursor = cursor.Add(d.Vector)
-			path.Add(cursor)
-		}
+		instructions = append(instructions, instruction{direction: d, length: utils.ToInt(parts[1])})
 	}
-	return path
-}
-
-func calculateArea(edge data.Set[data.Vector]) int {
-	minx, maxx, miny, maxy := math.MaxInt, 0, math.MaxInt, 0
-	for _, p := range edge.Values() {
-		if p.X < minx {
-			minx = p.X
-		}
-		if p.X > maxx {
-			maxx = p.X
-		}
-		if p.Y < miny {
-			miny = p.Y
-		}
-		if p.Y > maxy {
-			maxy = p.Y
-		}
-	}
-	var sum int
-	for y := miny; y <= maxy; y++ {
-		var edgePositionsInRow []data.Vector
-		for x := minx; x <= maxx; x++ {
-			pos := data.Vector{X: x, Y: y}
-			if edge.Has(pos) {
-				edgePositionsInRow = append(edgePositionsInRow, pos)
-			}
-		}
-		if len(edgePositionsInRow)%2 != 0 {
-			// Filter out horizontal edges by taking first x position of edges as "start" and last as "end"
-			var prev int
-			var edgeStart *int
-			var newEdgePositionsInRow []data.Vector
-			for i := 0; i < len(edgePositionsInRow); i++ {
-				if edgeStart != nil && (edgePositionsInRow[i].X-prev > 1 || i == len(edgePositionsInRow)-1) {
-					newEdgePositionsInRow = append(newEdgePositionsInRow, data.Vector{X: *edgeStart, Y: y})
-					newEdgePositionsInRow = append(newEdgePositionsInRow, data.Vector{X: edgePositionsInRow[i].X, Y: y})
-					edgeStart = nil
-					continue
-				}
-
-				prev = edgePositionsInRow[i].X
-				if edgeStart == nil {
-					edgeStart = &edgePositionsInRow[i].X
-				}
-			}
-			edgePositionsInRow = newEdgePositionsInRow
-		}
-		for i := 0; i < len(edgePositionsInRow); i += 2 {
-			sum += edgePositionsInRow[i+1].X - edgePositionsInRow[i].X + 1
-		}
-		//println("sum after row", y, sum)
-	}
-	return sum
-}
-
-func part1(lines []string) int {
-	fmt.Println("\n___________________________________________")
-	fmt.Println("part 1:")
-	instructions := parse(lines)
-	path := walk(instructions)
-	return calculateArea(path) // must be higher than 49582
+	return toLagoon(instructions).Area()
 }
 
 func part2(lines []string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
 
-	return -1
+	var instructions []instruction
+	for _, line := range lines {
+		parts := strings.Fields(line)
+		length, err := strconv.ParseInt(parts[2][2:len(parts[2])-2], 16, strconv.IntSize)
+		utils.Check(err)
+
+		var d directions.Direction
+		switch parts[2][7] {
+		case '0':
+			d = directions.Right
+		case '1':
+			d = directions.Down
+		case '2':
+			d = directions.Left
+		case '3':
+			d = directions.Up
+		}
+
+		instructions = append(instructions, instruction{direction: d, length: int(length)})
+	}
+	return toLagoon(instructions).Area()
 }
