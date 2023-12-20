@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,7 +20,7 @@ var testInput2 = []string{
 	"%a -> inv, con",
 	"&inv -> b",
 	"%b -> con",
-	"&con -> output",
+	"&con -> rx",
 }
 
 func Test_part1(t *testing.T) {
@@ -28,6 +29,5 @@ func Test_part1(t *testing.T) {
 }
 
 func Test_part2(t *testing.T) {
-	assert.Equal(t, 0, part2(testInput1))
-	assert.Equal(t, 0, part2(testInput2))
+	assert.Equal(t, 238815727638557, part2(strings.Split(input, "\n")))
 }

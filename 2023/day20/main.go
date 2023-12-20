@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoosvandenBekerom/advent-of-code/math"
+	"golang.org/x/exp/maps"
+
 	"github.com/GoosvandenBekerom/advent-of-code/data"
 )
 
@@ -67,60 +70,86 @@ func parse(lines []string) map[string]*module {
 	return modules
 }
 
-func pushButton(modules map[string]*module, times int) int {
-	lowSent := times
-	highSent := 0
+func pushButton(modules map[string]*module, moduleToFind string) (lowSent, highSent int, found bool) {
+	lowSent = 1
 	start := modules["broadcaster"]
 	q := data.NewQueue[*module]()
-	for i := 0; i < times; i++ {
-		q.Enqueue(start)
-		for !q.Empty() {
-			current := q.Dequeue()
-			if current.highPulse {
-				highSent += len(current.downstream)
-			} else {
-				lowSent += len(current.downstream)
+	q.Enqueue(start)
+	for !q.Empty() {
+		current := q.Dequeue()
+		if current.highPulse {
+			if current.name == moduleToFind {
+				return 0, 0, true
 			}
-			for _, dsm := range current.downstream {
-				next, exists := modules[dsm]
-				if !exists {
-					break
-				}
-				switch next.t {
-				case flipflop:
-					if !current.highPulse {
-						next.on = !next.on
-						next.highPulse = next.on
-						q.Enqueue(next)
-					}
-				case conjunction:
-					next.history[current.name] = current.highPulse
-					nextPulse := false
-					for _, lastPulse := range next.history {
-						if !lastPulse {
-							nextPulse = true
-							break
-						}
-					}
-					next.highPulse = nextPulse
+			highSent += len(current.downstream)
+		} else {
+			lowSent += len(current.downstream)
+		}
+		for _, dsm := range current.downstream {
+			next, exists := modules[dsm]
+			if !exists {
+				break
+			}
+			switch next.t {
+			case flipflop:
+				if !current.highPulse {
+					next.on = !next.on
+					next.highPulse = next.on
 					q.Enqueue(next)
 				}
+			case conjunction:
+				next.history[current.name] = current.highPulse
+				nextPulse := false
+				for _, lastPulse := range next.history {
+					if !lastPulse {
+						nextPulse = true
+						break
+					}
+				}
+				next.highPulse = nextPulse
+				q.Enqueue(next)
 			}
 		}
 	}
-	println(lowSent, highSent)
-	return lowSent * highSent
+	return lowSent, highSent, false
 }
 
 func part1(lines []string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 1:")
-	return pushButton(parse(lines), 1000)
+	modules := parse(lines)
+	var lowCount, highCount int
+	for i := 0; i < 1000; i++ {
+		low, high, _ := pushButton(modules, "")
+		lowCount += low
+		highCount += high
+	}
+	return lowCount * highCount
 }
 
 func part2(lines []string) int {
 	fmt.Println("\n___________________________________________")
 	fmt.Println("part 2:")
+	modulesToFind := map[string]int{
+		"lk": -1,
+		"fn": -1,
+		"fh": -1,
+		"hh": -1,
+	}
+	for needle := range modulesToFind {
+		modules := parse(lines)
+		count := 0
+		for {
+			count++
+			_, _, done := pushButton(modules, needle)
+			if done {
+				modulesToFind[needle] = count
+				break
+			}
+		}
+	}
 
-	return -1
+	fmt.Printf("%v\n", modulesToFind)
+	counts := maps.Values(modulesToFind)
+	return math.LeastCommonMultiple(counts[0], counts[1], counts[2], counts[3])
 }
