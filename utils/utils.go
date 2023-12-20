@@ -2,8 +2,6 @@ package utils
 
 import (
 	"strconv"
-
-	"golang.org/x/exp/constraints"
 )
 
 func Check(err error) {
@@ -46,11 +44,4 @@ func ReverseSlice[S any](s []S) {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}
-}
-
-func Abs[T constraints.Signed](i T) T {
-	if i < 0 {
-		return i * -1
-	}
-	return i
 }

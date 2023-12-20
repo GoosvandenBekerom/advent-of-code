@@ -6,11 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoosvandenBekerom/advent-of-code/data/directions"
-
-	"github.com/GoosvandenBekerom/advent-of-code/utils"
-
 	"github.com/GoosvandenBekerom/advent-of-code/data"
+	"github.com/GoosvandenBekerom/advent-of-code/data/directions"
+	"github.com/GoosvandenBekerom/advent-of-code/math"
+	"github.com/GoosvandenBekerom/advent-of-code/utils"
 )
 
 //go:embed input
@@ -53,7 +52,7 @@ func (l lagoon) Area() int {
 		area += l.vertices[c].X*l.vertices[c+1].Y - l.vertices[c+1].X*l.vertices[c].Y
 	}
 	area += l.vertices[len(l.vertices)-1].X*l.vertices[0].Y - l.vertices[0].X*l.vertices[len(l.vertices)-1].Y
-	area = utils.Abs(area)
+	area = math.Abs(area)
 
 	return l.perimeter + (area-l.perimeter)/2 + 1
 }
